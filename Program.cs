@@ -1,49 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 
-/* Realize generic class that searches values in the list. 
- * Call search operations through generic delegates. 
- * To implement this for strings and 3D points.
- * 
- * Реализуйте обобщенный класс, который ищет значения в списке. 
- * Вызовите операции поиска через общие делегаты. 
- * Чтобы реализовать это для строк и трехмерных точек. */
+/** <remark>
+ * Realize generic class that searches values in the list. 
+ * Call search operations through generic delegates to implement this for strings and 3D points.
+ </remark> */
 
 namespace _20180315_Task1
 {
-    delegate T SomeOp<T>(T v);
+    internal delegate bool Operation<in T>(T parameter);
 
-    class GenDelegate
+    internal class Program
     {
-        // Метод для подсчета количества заданного элемента в списке
-        static int Find(int v)
+        private static void Main()
         {
-            List<int> numbers = new List<int>() { 2, 1, 3, 4, 7, 3 };
-            int result = 0;
+            Console.WriteLine("********** Searching for string values **********");
 
-            Console.Write("Содержимое списка: ");
-            foreach (int item in numbers)
+            List<string> strings = new List<string> { "Lemon", "Apple", "Cherry", "Strawberry", "Melon" };
+
+            foreach (string word in strings)
             {
-                Console.Write(item + " ");
+                Console.Write(word + "  ");
             }
+            Console.WriteLine("\n");
 
-            // Поиск и подсчет интересующего числа
-            foreach (int item in numbers)
+            GenericClass<string> gc1 = new GenericClass<string>(strings);
+            Operation<string> strDel = gc1.Search;
+
+            Console.WriteLine("Cherry: " + strDel.Invoke("Cherry"));
+            Console.WriteLine("Watermelon: " + strDel.Invoke("Watermelon"));
+            Console.WriteLine("\n");
+
+
+
+            Console.WriteLine("********** Searching for 3D points **********");
+
+            List<Point3D> points = new List<Point3D>
             {
-                if (item == v)
-                    result++;
+                new Point3D(16.3, 5.2, 14.7),
+                new Point3D(5.2, 11.8, 24)
+            };
+
+            foreach (Point3D point in points)
+            {
+                Console.WriteLine(point);
             }
-            return result;
-        }
+            Console.WriteLine();
 
-        static void Main()
-        {
-            SomeOp<int> intDel = Find;
+            GenericClass<Point3D> gc2 = new GenericClass<Point3D>(points);
+            Operation<Point3D> pointDel = gc2.Search;
 
-            int wantedNumber = 3;
-
-            // Выводим количество троек в списке
-            Console.Write($"\nКоличество {wantedNumber} в списке: " + intDel(wantedNumber));
+            Console.WriteLine("[x =  5.2;  y = 11.8;  z =   24]: " + pointDel.Invoke(new Point3D(5.2, 11.8, 24)));
+            Console.WriteLine("[x =    7;  y =    7;  z =    7]: " + pointDel.Invoke(new Point3D(7, 7, 7)));
 
             Console.ReadKey();
         }
